@@ -15,8 +15,8 @@
 	<div class="container">
 		<div class="jumbotron jumbotron-fluid">
 			<div class="container">
-				<h1 class="display-3" style="text-align:center">Employee Data Management</h1>
-				<p class="lead" style="text-align:center">A comprehensive Directory of Employee Billable Hours</p>
+				<h1 class="display-3">Fluid jumbotron</h1>
+				<p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
 			</div>
 		</div>
 
@@ -69,6 +69,8 @@
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+	<!-- Link to Moment.js should go here -->
+	<script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
 
 	<script type="text/javascript">
 		 // Initialize Firebase
@@ -86,11 +88,27 @@
 		 var role = "";
 		 var start = "";
 		 var rate = 0;
+    	 var startFormat = "MM/DD/YYYY";
 
+		 database.ref().orderByChild("dateAdded").on("child_added", function(cs) {
+		 	console.log(cs.val());
+		 	var monthsWorked = moment(cs.val().start).diff(moment(), "months") * -1;
+		 	$("tbody").append(`
+		 		<tr>
+		 		<td>${cs.val().name}</td>
+		 		<td>${cs.val().role}</td>
+		 		<td>${cs.val().start}</td>
+		 		<td>${monthsWorked}</td>
+		 		<td>$${cs.val().rate}</td>
+		 		<td>$${monthsWorked * cs.val().rate}</td>
+		 		</tr>`)
+		 });
 
 
 		 $("button").click( function(e){
 		 	e.preventDefault();
+		 	// var startDate = $("#start").val().trim();
+		 	// var converted = moment(startDate, startFormat);
 		 	var formData = {
 		 		name: $("#name").val().trim(),
 		 		role: $("#role").val().trim(),
@@ -101,21 +119,27 @@
 		 	console.log(formData.name);
 		 	database.ref().push(formData);
 
-		 	database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
-		 		var sv = snapshot.val();
-		 		console.log(sv);
+		 	// database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+		 	// 	var sv = snapshot.val();
+		 	// 	console.log(sv);
 
-		 		$("tbody").append(`
-		 			<tr>
-		 			<td>${sv.name}</td>
-		 			<td>${sv.role}</td>
-		 			<td>${sv.start}</td>
-		 			<td>months</td>
-		 			<td>$${sv.rate}</td>
-		 			<td>$$$</td>
-		 			</tr>`)
-		 	});
+
+		 	// });
 		 });
+
+
 		</script>
 	</body>
 	</html>
+
+
+
+
+
+
+
+
+
+
+
+
