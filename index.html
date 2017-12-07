@@ -8,6 +8,8 @@
 
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+	<script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>
+	<link rel="stylesheet" type="text/css" href="assets/style.css">
 </head>
 <body>
 	<div class="container">
@@ -69,18 +71,51 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 
 	<script type="text/javascript">
-		$("button").click( function(e){
-			e.preventDefault();
-			$("tbody").append(`
-				<tr>
-					<td>Joe</td>
-					<td>Man</td>
-					<td>11/17/17</td>
-					<td>12</td>
-					<td>$4</td>
-					<td>$100</td>
-				</tr>`)
-		})
-	</script>
-</body>
-</html>
+		 // Initialize Firebase
+		 var config = {
+		 	apiKey: "AIzaSyAUo4N3-ASi4uKR7x14-MPByWs3g444F8c",
+		 	authDomain: "employeetracker-d9771.firebaseapp.com",
+		 	databaseURL: "https://employeetracker-d9771.firebaseio.com",
+		 	projectId: "employeetracker-d9771",
+		 	storageBucket: "employeetracker-d9771.appspot.com",
+		 	messagingSenderId: "113189897572"
+		 };
+		 firebase.initializeApp(config);
+		 var database = firebase.database();
+		 var name = "";
+		 var role = "";
+		 var start = "";
+		 var rate = 0;
+
+
+
+		 $("button").click( function(e){
+		 	e.preventDefault();
+		 	var formData = {
+		 		name: $("#name").val().trim(),
+		 		role: $("#role").val().trim(),
+		 		start: $("#start").val().trim(),
+		 		rate: $("#rate").val().trim(),
+		 		dateAdded: firebase.database.ServerValue.TIMESTAMP,
+		 	};
+		 	console.log(formData.name);
+		 	database.ref().push(formData);
+
+		 	database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+		 		var sv = snapshot.val();
+		 		console.log(sv);
+
+		 		$("tbody").append(`
+		 			<tr>
+		 			<td>${sv.name}</td>
+		 			<td>${sv.role}</td>
+		 			<td>${sv.start}</td>
+		 			<td>months</td>
+		 			<td>$${sv.rate}</td>
+		 			<td>$$$</td>
+		 			</tr>`)
+		 	});
+		 });
+		</script>
+	</body>
+	</html>
